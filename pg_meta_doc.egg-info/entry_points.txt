@@ -1,0 +1,2 @@
+[console_scripts]
+dbdoc = pg_meta_doc.cli:main

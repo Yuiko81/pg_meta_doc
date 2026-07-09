@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: dbdoc
+      POSTGRES_USER: dbdoc
+      POSTGRES_PASSWORD: dbdoc
+    ports:
+      - "54329:5432"
+    volumes:
+      - ./examples/demo_schema.sql:/docker-entrypoint-initdb.d/001_demo_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbdoc -d dbdoc"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  dbdoc:
+    build: .
+    working_dir: /workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/workspace
+    command:
+      [
+        "python",
+        "-m",
+        "pg_meta_doc.cli",
+        "scan",
+        "--dsn",
+        "postgresql://dbdoc:dbdoc@postgres:5432/dbdoc",
+        "--output",
+        "/workspace/.dbdoc/schema.json"
+      ]
