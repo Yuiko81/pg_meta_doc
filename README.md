@@ -8,12 +8,12 @@
 - flags missing primary keys, suspicious nullable columns, duplicate identifier variants, missing indexes, and large-table FK-like columns without indexes
 - saves a JSON schema snapshot and renders `docs/schema.md`
 - exposes a CLI: `dbdoc scan`, `dbdoc report`, `dbdoc lint`
-- ships with a demo schema, Docker Compose setup, and pytest coverage
+- includes an optional Docker wrapper and pytest coverage
 
 ## Install
 
 ```bash
-python3 -m pip install -e .[dev]
+python3 -m pip install -e '.[dev]'
 ```
 
 ## CLI
@@ -21,25 +21,42 @@ python3 -m pip install -e .[dev]
 Scan a database and save the snapshot:
 
 ```bash
-dbdoc scan --dsn postgresql://user:pass@localhost:5432/db
+dbdoc scan --dsn 'postgresql://user:pass@db-host:5432/dbname'
 ```
 
 Render Markdown from the saved snapshot:
 
 ```bash
-dbdoc report --format markdown
+dbdoc report --input .dbdoc/schema.json --output docs/schema.md
 ```
 
 Lint the saved snapshot:
 
 ```bash
-dbdoc lint
+dbdoc lint --input .dbdoc/schema.json
 ```
 
 You can also lint a live database directly:
 
 ```bash
-dbdoc lint --dsn postgresql://user:pass@localhost:5432/db
+dbdoc lint --dsn 'postgresql://user:pass@db-host:5432/dbname'
+```
+
+Typical workflow:
+
+```bash
+dbdoc scan --dsn 'postgresql://user:pass@db-host:5432/dbname'
+dbdoc report --input .dbdoc/schema.json --output docs/schema.md
+dbdoc lint --input .dbdoc/schema.json
+```
+
+## Docker
+
+If you do not want to install Python dependencies on the host, you can run the CLI in Docker:
+
+```bash
+docker compose run --rm dbdoc scan --dsn 'postgresql://user:pass@db-host:5432/dbname' --output /workspace/.dbdoc/schema.json
+docker compose run --rm dbdoc report --input /workspace/.dbdoc/schema.json --output /workspace/docs/schema.md
 ```
 
 ## Project Layout
@@ -54,7 +71,6 @@ pg_meta_doc/
 │   ├── mermaid.py
 │   └── rules.py
 ├── tests/
-├── examples/
 ├── docs/
 ├── docker-compose.yml
 ├── Dockerfile
@@ -62,19 +78,3 @@ pg_meta_doc/
 ├── pyproject.toml
 └── README.md
 ```
-
-## Demo
-
-Start PostgreSQL with the demo schema:
-
-```bash
-docker compose up -d postgres
-```
-
-Generate the snapshot and report:
-
-```bash
-make demo-report
-```
-
-The example output lives in `docs/example_report.md`.

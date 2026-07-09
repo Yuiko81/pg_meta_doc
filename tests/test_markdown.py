@@ -12,7 +12,7 @@ from pg_meta_doc.markdown import render_markdown
 def test_render_markdown_contains_table_sections_and_mermaid():
     snapshot = SchemaSnapshot(
         generated_at="2026-01-01T00:00:00+00:00",
-        source="postgresql://demo:***@localhost:5432/demo",
+        source="postgresql://user:***@localhost:5432/app",
         tables=[
             TableSpec(
                 schema="public",

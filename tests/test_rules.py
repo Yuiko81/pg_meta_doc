@@ -5,7 +5,7 @@ from pg_meta_doc.rules import lint_schema
 def test_lint_schema_finds_expected_issues():
     snapshot = SchemaSnapshot(
         generated_at="2026-01-01T00:00:00+00:00",
-        source="postgresql://demo:***@localhost:5432/demo",
+        source="postgresql://user:***@localhost:5432/app",
         tables=[
             TableSpec(
                 schema="public",
