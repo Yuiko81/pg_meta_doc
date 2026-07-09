@@ -6,7 +6,7 @@ REPORT ?= docs/schema.md
 .PHONY: install test scan report lint
 
 install:
-	$(PYTHON) -m pip install -e .[dev]
+	$(PYTHON) -m pip install -e '.[dev]'
 
 test:
 	$(PYTHON) -m pytest
