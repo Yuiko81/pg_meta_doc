@@ -1,7 +1,27 @@
 services:
   dbdoc:
     build: .
-    working_dir: /workspace
+    container_name: pg-meta-doc-demo
+
+    environment:
+      POSTGRES_DB: dbdoc
+      POSTGRES_USER: dbdoc
+      POSTGRES_PASSWORD: dbdoc
+
+    ports:
+      - "5432:5432"
+
     volumes:
+      - pgdata:/var/lib/postgresql/data
       - .:/workspace
-    entrypoint: ["python", "-m", "pg_meta_doc.cli"]
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dbdoc -d dbdoc"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    restart: unless-stopped
+
+volumes:
+  pgdata:
